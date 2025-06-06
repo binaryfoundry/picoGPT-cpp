@@ -32,6 +32,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#include "encoder.hpp"
+
 using std::ifstream;
 using std::ofstream;
 using std::size_t;
