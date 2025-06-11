@@ -16,12 +16,17 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT $
 add_library(nlohmann INTERFACE)
 target_include_directories(nlohmann INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-# Add main executable source
-set(MAIN_SOURCE
-    src/gpt2_pico.cpp)
+# Add sources
+set(MAIN_SOURCES
+    src/gpt2_pico.cpp
+    src/encoder.cpp)
+
+# Add sources
+set(MAIN_HEADERS
+    src/encoder.hpp)
 
 # Define the executable
-add_executable(${PROJECT_NAME} ${MAIN_SOURCE})
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES} ${MAIN_HEADERS})
 
 # Link the static library to the executable
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann)
@@ -30,7 +35,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Group headers and source files in Visual Studio's Solution Explorer
-source_group("Source Files" FILES ${MAIN_SOURCE})
+source_group("Source Files" FILES ${MAIN_SOURCES})
+source_group("Header Files" FILES ${MAIN_HEADERS})
 
 # Set compiler-specific options
 if(MSVC)

@@ -208,7 +208,7 @@ Matrix mha(const Matrix& X,
             K[i][j] = qkv_combined[i][n_embd + j];
             V[i][j] = qkv_combined[i][2 * n_embd + j];
         }
-    }
+    } 
 
     // 3) Create causal mask [n_seq x n_seq]: mask[i][j] = 0 if j ≤ i, else -1e10
     Matrix mask(n_seq, vector<float>(n_seq, 0.0f));
@@ -236,7 +236,7 @@ Matrix mha(const Matrix& X,
                 Vh[i][j] = V[i][start + j];
             }
         }
-        // Apply scaled dot-product attention for this head
+        // Apply scaled dot-product attention for this head 
         head_outputs.push_back(attention(Qh, Kh, Vh, mask));  // [n_seq x d_head]
     }
 
