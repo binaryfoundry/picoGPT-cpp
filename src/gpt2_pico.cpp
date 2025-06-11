@@ -1,21 +1,11 @@
-// Single‐file C++ implementation of GPT-2 inference (picoGPT style) plus
+// C++ implementation of GPT-2 inference (picoGPT style) plus
 // loading of model weights and metadata (as produced by the accompanying
 // Python script). Requires a single‐header JSON library (e.g. nlohmann/json.hpp).
 //
-// To compile (assuming nlohmann/json.hpp is in your include path):
-//   g++ -std=c++17 -O2 gpt2_inference_with_loader.cpp -o gpt2_infer
-//
-// Usage example (after compiling and placing weights in "./cpp_gpt2"):
-//   ./gpt2_infer ./cpp_gpt2 "Hello, world!"
-//
-// This will load all weights from:
-//   ./cpp_gpt2/hparams.json
-//   ./cpp_gpt2/metadata.json
-//   ./cpp_gpt2/<param_name>.bin  (one .bin per parameter)
-//   ./cpp_gpt2/encoder.json
-//   ./cpp_gpt2/vocab.bpe
-//
-// and then run a single forward pass (printing the logits for the final token).
+// On Windows run setup-env.bat to set up the Python environment required to download the
+// GPT2 Tensorflow checkpoint.
+// 
+// Run fetch-gpt2.py which will convert the checkpoint to JSON which is loaded in here.
 //
 // ------------------------------------------------------------------------------------------------
 
@@ -29,7 +19,7 @@
 #include <vector>
 #include <utility>
 
-// Include the nlohmann::json single‐header library.+
+// Include the nlohmann::json single‐header library.
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
