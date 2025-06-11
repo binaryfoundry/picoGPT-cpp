@@ -28,7 +28,7 @@ struct PairStringEqual {
 class BPEEncoder {
 public:
     // Constructor: loads encoder.json and vocab.bpe from disk
-    BPEEncoder(const std::string& models_dir, const std::string& errors = "replace");
+    BPEEncoder(const std::string& model_dir, const std::string& errors = "replace");
 
     // Encode a plain UTF-8 text string into BPE token IDs
     std::vector<int> encode(const std::string& text);

@@ -119,12 +119,12 @@ static std::set<std::pair<std::string, std::string>> get_pairs(const std::vector
 // -----------------------------------------------------------------------------
 // BPEEncoder: Implements Byte-Pair Encoding (BPE) for GPT-2 in C++.
 // -----------------------------------------------------------------------------
-BPEEncoder::BPEEncoder(const std::string& models_dir, const std::string& errors)
+BPEEncoder::BPEEncoder(const std::string& model_dir, const std::string& errors)
         : errors_(errors)
 {
     // 1) Load encoder.json into encoder_ (map<string,int>)
     {
-        std::string enc_path = models_dir + "\\encoder.json";
+        std::string enc_path = model_dir + "\\encoder.json";
         std::ifstream fin(enc_path);
         if (!fin) {
             throw std::runtime_error("Could not open: " + enc_path);
@@ -138,7 +138,7 @@ BPEEncoder::BPEEncoder(const std::string& models_dir, const std::string& errors)
 
     // 2) Load vocab.bpe (all merges)
     {
-        std::string bpe_path = models_dir + "\\vocab.bpe";
+        std::string bpe_path = model_dir + "\\vocab.bpe";
         std::ifstream fin(bpe_path);
         if (!fin) {
             throw std::runtime_error("Could not open: " + bpe_path);
