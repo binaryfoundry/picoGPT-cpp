@@ -150,12 +150,12 @@ class BPEEncoder {
 public:
     // Constructor: loads encoder.json and vocab.bpe from disk
     // models_dir/model_name/encoder.json and vocab.bpe
-    BPEEncoder(const std::string& models_dir, const std::string& model_name, const std::string& errors = "replace")
+    BPEEncoder(const std::string& models_dir, const std::string& errors = "replace")
         : errors_(errors)
     {
         // 1) Load encoder.json into encoder_ (map<string,int>)
         {
-            std::string enc_path = models_dir + "\\" + model_name + "\\encoder.json";
+            std::string enc_path = models_dir + "\\encoder.json";
             std::ifstream fin(enc_path);
             if (!fin) {
                 throw std::runtime_error("Could not open: " + enc_path);
@@ -169,7 +169,7 @@ public:
 
         // 2) Load vocab.bpe (all merges)
         {
-            std::string bpe_path = models_dir + "\\" + model_name + "\\vocab.bpe";
+            std::string bpe_path = models_dir + "\\vocab.bpe";
             std::ifstream fin(bpe_path);
             if (!fin) {
                 throw std::runtime_error("Could not open: " + bpe_path);

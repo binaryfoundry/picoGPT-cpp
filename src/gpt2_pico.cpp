@@ -27,6 +27,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <utility>
 
 // Include the nlohmann::json single‐header library.+
 #include <nlohmann/json.hpp>
@@ -549,53 +550,75 @@ int main(const int argc, char* const argv[]) {
     const string model_dir = argv[1];
     const string prompt    = argv[2];
 
-    try {
-        std::cout << "Loading model from: " << model_dir << " \n";
-        const GPT2Model model = load_model(model_dir);
-        std::cout << "Loaded GPT-2 with:\n"
-                  << "    n_layer    = " << model.n_layer   << "\n"
-                  << "    n_embd     = " << model.n_embd    << "\n"
-                  << "    n_head     = " << model.n_head    << "\n"
-                  << "    n_ctx      = " << model.n_ctx     << "\n"
-                  << "    n_vocab    = " << model.n_vocab   << "\n\n";
+    std::cout << "Loading model from: " << model_dir << " \n";
+    const GPT2Model model = load_model(model_dir);
+    std::cout << "Loaded GPT-2 with:\n"
+              << "    n_layer    = " << model.n_layer   << "\n"
+              << "    n_embd     = " << model.n_embd    << "\n"
+              << "    n_head     = " << model.n_head    << "\n"
+              << "    n_ctx      = " << model.n_ctx     << "\n"
+              << "    n_vocab    = " << model.n_vocab   << "\n\n";
 
-        // --------------------------------------------------------------------
-        // Tokenization step (BPE) must be implemented separately in C++,
-        // using encoder.json and vocab.bpe. Here, we only demonstrate loading
-        // and a dummy input sequence. Replace this with a real BPE tokenizer.
-        // --------------------------------------------------------------------
-        //
-        // For demonstration, we assume `input_tokens` is a vector<int> of token IDs.
-        // In practice, you would:
-        //   1) Load encoder.json and vocab.bpe
-        //   2) Apply GPT-2 BPE to `prompt` to get BPE tokens
-        //   3) Convert each BPE token to its corresponding ID via the encoder's vocab
-        //
-        // Here, we simply create a dummy single‐token input: [0]
-        const vector<int> input_tokens = { 0 };
+    std::cout << "Prompt:\n" << prompt << "\n\n";
 
-        // --------------------------------------------------------------------
-        // Run a single forward pass
-        // --------------------------------------------------------------------
-        const Matrix logits = gpt2_forward(input_tokens, model);
-        // logits is [n_seq x n_vocab]. We can print logits of the last token.
-        const int last_index = static_cast<int>(input_tokens.size()) - 1;
-        std::cout << "Logits for last position (length = " << model.n_vocab << "):\n";
-        for (int v = 0; v < model.n_vocab; ++v) {
-            // Print only the first 10 values for brevity
-            if (v < 10) {
-                std::cout << logits[last_index][v] << " ";
-            } else if (v == 10) {
-                std::cout << "...";
-                break;
-            }
-        }
-        std::cout << "\n";
+    // --------------------------------------------------------------------
+    // Tokenization step (BPE)
+    // --------------------------------------------------------------------
+    BPEEncoder encoder(model_dir);
+    vector<int> input_tokens = encoder.encode(prompt);
+
+    // --------------------------------------------------------------------
+    // Run a single forward pass
+    // --------------------------------------------------------------------
+    const Matrix logits = gpt2_forward(input_tokens, model);
+
+    // --------------------------------------------------------------------
+    // Greedy decode: take the logits of the last position
+    // --------------------------------------------------------------------
+    int last_idx = static_cast<int>(input_tokens.size()) - 1;
+    vector<float> last_logits = logits[last_idx];      // shape: [n_vocab]
+
+    // Apply softmax to convert to probabilities
+    vector<float> probs = softmax(last_logits);
+
+    // Build (prob, id) pairs and sort descending
+    vector<std::pair<float, int>> pid;
+    pid.reserve(probs.size());
+    for (int i = 0; i < model.n_vocab; ++i) {
+        pid.emplace_back(probs[i], i);
     }
-    catch (const std::exception& ex) {
-        std::cerr << "Error: " << ex.what() << "\n";
-        return 1;
+    std::sort(pid.begin(), pid.end(),
+        [](auto& a, auto& b) { return a.first > b.first; });
+
+    // Print top 10
+    std::cout << "Top 10 next tokens:\n";
+    for (int i = 0; i < 10 && i < (int)pid.size(); ++i) {
+        float p = pid[i].first;
+        int   id = pid[i].second;
+        // decode single token ID to string
+        string tok = encoder.decode(vector<int>{id});
+        std::cout
+            << std::setw(2) << (i + 1) << ": "
+            << "ID=" << id
+            << "  prob=" << p
+            << "  token=\"" << tok << "\"\n";
     }
+
+    // Find the argmax token ID
+    auto max_it = std::max_element(probs.begin(), probs.end());
+    int next_id = static_cast<int>(std::distance(probs.begin(), max_it));
+
+    std::cout << "Predicted next token ID: " << next_id
+        << "  (prob=" << *max_it << ")\n";
+    std::cout << "\n";
+
+    // --------------------------------------------------------------------
+    // Append the predicted ID and decode the full sequence back to text
+    // --------------------------------------------------------------------
+    input_tokens.push_back(next_id);
+    string output_text = encoder.decode(input_tokens);
+
+    std::cout << "Decoded text:\n" << output_text << "\n";
 
     return 0;
 }
