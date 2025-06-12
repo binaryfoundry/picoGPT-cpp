@@ -9,31 +9,25 @@
 //
 // ------------------------------------------------------------------------------------------------
 
-#include <algorithm>
-#include <cmath>
 #include <fstream>
 #include <iostream>
-#include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <vector>
-#include <utility>
-
-// Include the nlohmann::json single‐header library.
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
-#include "encoder.hpp"
 
 using std::ifstream;
 using std::ofstream;
 using std::size_t;
 using std::string;
 using std::vector;
-using std::unordered_map;
 
 // A simple alias for a 2D float matrix (row-major).
 using Matrix = vector<vector<float>>;
+
+// Include the nlohmann::json single‐header library.
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+#include "encoder.hpp"
 
 // ------------------------------------------------------------
 //  Activation Functions / Normalization / Linear Layer
