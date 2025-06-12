@@ -4,7 +4,7 @@ A C++ implementation of GPT-2 (picoGPT-style) inference using only the C++ stand
 
 Based on [picoGPT](https://github.com/jaymody/picoGPT).
 
-![](docs/debug.png)
+[![Debugging Video](docs/debug.png)](https://www.youtube.com/embed/OvdAZF1qjpY?si=ZtcEqZVIr15FQcaU)
 
 Accompanying blog post for picoGPT: [GPT in 60 Lines of Numpy](https://jaykmody.com/blog/gpt-from-scratch/)
 
