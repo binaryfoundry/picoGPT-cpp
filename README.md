@@ -91,7 +91,7 @@ The feed‑forward sub‑layer consists of a linear expansion (4× hidden size),
 
 ## Requirements
 
-* **C++17** compiler (e.g., `g++ -std=c++17 -O2`).
+* **C++20** compiler (e.g., `g++ -std=c++20 -O2`).
 * **nlohmann/json.hpp** (header‑only JSON library) for loading model metadata.
 
 ## Usage Outline
