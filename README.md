@@ -8,6 +8,15 @@ Based on [picoGPT](https://github.com/jaymody/picoGPT).
 
 Accompanying blog post for picoGPT: [GPT in 60 Lines of Numpy](https://jaykmody.com/blog/gpt-from-scratch/)
 
+## Setup
+
+### Windows
+
+1. Run `setup-env.bat` for a Python virtual environment with the correct Tensorflow version.
+2. Run `python fetch-gpt2.py` which will by default fetch the 124M parameter GPT2 Tensorflow checkpoint and convert to JSON for loading in C++.
+3. Generate VisualStudio project files with `make-win.bat`.
+4. Run executable with parameters `<model_download_directory> "The capital city of England is called"`.
+
 ## Overview
 
 This implementation provides all core components of the GPT-2 model in a self‑contained manner:
