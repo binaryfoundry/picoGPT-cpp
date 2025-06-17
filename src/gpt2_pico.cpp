@@ -692,7 +692,7 @@ int main(const int argc, char* const argv[]) {
     std::cout << "Prompt:\n" << prompt << "\n\n";
 
     // Tokenization step (BPE)
-    BPEEncoder encoder(model_dir);
+    Encoding::BPEEncoder encoder(model_dir);
     vector<int> input_tokens = encoder.encode(prompt);
 
     // Run a single forward pass

@@ -18,8 +18,7 @@ target_include_directories(nlohmann INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 # Add sources
 set(MAIN_SOURCES
-    src/gpt2_pico.cpp
-    src/encoder.cpp)
+    src/gpt2_pico.cpp)
 
 # Add sources
 set(MAIN_HEADERS
