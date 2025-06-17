@@ -11,10 +11,12 @@ This script:
   6. Copies the tokenizer files (encoder.json, vocab.bpe) to the output directory.
 
 Usage:
+    python fetch-gpt2.py
+
+Optional Usage:
     python fetch-gpt2.py \
         --model_size 124M \
         --models_dir ./models \
-        --output_dir ./models
 """
 
 import os
