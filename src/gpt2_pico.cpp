@@ -9,6 +9,9 @@
 //
 // ------------------------------------------------------------------------------------------------
 
+#include "encoder.hpp"
+#include <nlohmann/json.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -22,12 +25,6 @@ using std::vector;
 
 // A simple alias for a 2D float matrix (row-major).
 using Matrix = vector<vector<float>>;
-
-// Include the nlohmann::json single‐header library.
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
-#include "encoder.hpp"
 
 // ------------------------------------------------------------
 //  Activation Functions / Normalization / Linear Layer
@@ -511,12 +508,12 @@ Matrix gpt2_forward(const vector<int>& input_tokens,
  *
  * @throws std::runtime_error if the file cannot be opened or if parsing fails.
  */
-json read_json(const string& path) {
+nlohmann::json read_json(const string& path) {
     ifstream fin(path);
     if (!fin || !fin.is_open()) {
         throw std::runtime_error("Could not open JSON file: " + path);
     }
-    json j;
+    nlohmann::json j;
     fin >> j;
     return j;
 }
@@ -576,7 +573,7 @@ void read_floats_from_bin(const string& path,
 GPT2Model load_model(const string& model_dir) {
     // 1) Read hparams.json
     const string hparams_path = model_dir + "/hparams.json";
-    const json hps = read_json(hparams_path);
+    const nlohmann::json hps = read_json(hparams_path);
 
     GPT2Model model;
     model.n_embd     = hps.at("n_embd").get<int>();
@@ -587,7 +584,7 @@ GPT2Model load_model(const string& model_dir) {
 
     // 2) Read metadata.json
     const string meta_path = model_dir + "/metadata.json";
-    const json meta = read_json(meta_path);
+    const nlohmann::json meta = read_json(meta_path);
 
     // Helper lambda to fetch shape from metadata
     const auto get_shape = [&](const string& key) -> vector<int> {
