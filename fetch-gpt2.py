@@ -231,28 +231,8 @@ def save_params_binary(flat_params, output_dir):
 
     print(f"  → Saved {len(flat_params)} arrays as .bin, wrote metadata.json")
 
-
 # ------------------------------------------------------------------------------
-# (5) Copy tokenizer files (encoder.json, vocab.bpe) so C++ can load BPE as-is
-# ------------------------------------------------------------------------------
-
-def copy_tokenizer_files(model_size, models_dir, output_dir):
-    """
-    Copy encoder.json and vocab.bpe from models_dir/model_size to output_dir.
-    """
-    model_dir = os.path.join(models_dir, model_size)
-    for fname in ["encoder.json", "vocab.bpe"]:
-        src = os.path.join(model_dir, fname)
-        dst = os.path.join(output_dir, fname)
-        if os.path.exists(src):
-            shutil.copy(src, dst)
-            print(f"  → Copied {fname} to {output_dir}")
-        else:
-            print(f"Warning: {src} not found; skipping copy of tokenizer file.")
-
-
-# ------------------------------------------------------------------------------
-# (6) Main: glue everything together
+# (5) Main: glue everything together
 # ------------------------------------------------------------------------------
 
 def main(model_size, models_dir, output_dir):
@@ -267,14 +247,11 @@ def main(model_size, models_dir, output_dir):
     print("3) Saving all parameters as raw float32 binaries …")
     save_params_binary(flat, output_dir)
 
-    print("4) Copying tokenizer files for C++ …")
-    copy_tokenizer_files(model_size, models_dir, output_dir)
-
     print("\nAll done! Your C++ code can now load:")
-    print("  - <output_dir>/metadata.json   (maps name → shape)")
-    print("  - <output_dir>/<name>.bin      (raw float32 data)")
-    print("  - <output_dir>/encoder.json    (BPE encoder config)")
-    print("  - <output_dir>/vocab.bpe       (BPE merges/vocab)")
+    print("  - <output_dir>/<model_size>/metadata.json   (maps name → shape)")
+    print("  - <output_dir>/<model_size>/<name>.bin      (raw float32 data)")
+    print("  - <output_dir>/<model_size>/encoder.json    (BPE encoder config)")
+    print("  - <output_dir>/<model_size>/vocab.bpe       (BPE merges/vocab)")
     print("\nHappy inference in C++!")
 
 
@@ -285,21 +262,16 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_size",
         type=str,
-        required=True,
+        default="124M",
         choices=["124M", "355M", "774M", "1558M"],
         help="GPT-2 model size (124M, 355M, 774M, or 1558M).",
     )
     parser.add_argument(
         "--models_dir",
         type=str,
-        required=True,
+        default="./models",
         help="Directory where GPT-2 checkpoints (and encoder.json, vocab.bpe) are stored (or will be downloaded).",
     )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        required=True,
-        help="Output directory for .bin files, metadata.json, and tokenizer files.",
-    )
     args = parser.parse_args()
-    main(args.model_size, args.models_dir, args.output_dir)
+    output_dir = os.path.join(args.models_dir, args.model_size)
+    main(args.model_size, args.models_dir, output_dir)
